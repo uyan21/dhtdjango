@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      setInterval('google.charts.setOnLoadCallback(drawChart)',1000);
+      
+      list= new Array;
+      list=[  ['Time', 'Tem','Hum']];
+        var i = 0;
+        function drawChart() {
+            
+            var data = google.visualization.arrayToDataTable(list);
+            var options = {
+                series: {
+                    0: { targetAxisIndex: 0 },
+                    1: { targetAxisIndex: 1 }
+                },
+                title: 'Vizuaization',
+                hAxis: { title: 'Time' },
+                vAxes: {
+                    
+                    0: { title: 'Tem' },
+                    1: { title: 'Hum' }
+                },
+
+
+
+                legend: 'none'
+            };
+            var chart = new
+                google.visualization.LineChart(document.getElementById('div'));
+
+            chart.draw(data, options);
+
+            var jsondata = loadXMLDoc();
+
+            list.push(jsondata);
+        }
+        
+        function loadXMLDoc() {
+            var now = new Date();
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+    
+          val = JSON.parse(this.responseText);
+          val.hum *= 1;
+          val.tem *= 1;
+      };
+            xhttp.open('POST','/jsbrowse');
+            xhttp.send();
+            
+            return [new Date(now.getYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()), val.tem, val.hum];
+      }
+    </script>
+  </head>
+  <body>
+      
+      <div id="div" style="width: 1500px; height: 800px;"></div>
+  </body>
+</html>
